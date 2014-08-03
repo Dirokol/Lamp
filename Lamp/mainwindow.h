@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include <QMainWindow>
-#include <QtNetwork/QTcpSocket>
+#include <QtNetwork>
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +30,8 @@ private:
     bool connecting();
     void disconnecting();
     bool send_to_server(const void *buf, size_t sz);
+    void on_off_lamp(bool flag);
+    void set_lamp_color(uint8_t red, uint8_t green, uint8_t blue);
 
     Ui::MainWindow *ui;
 

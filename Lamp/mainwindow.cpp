@@ -1,9 +1,14 @@
 #include <QAbstractSocket>
 
+#include <iostream>
+
+#include <QtNetwork>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include "authwin.h"
+#include "structs.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
         exit(EXIT_FAILURE);
 
     connect(m_tcp, SIGNAL(readyRead()), this, SLOT(on_recv_server()));
+
+ //   ui->textBrowser->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -98,5 +105,36 @@ bool MainWindow::send_to_server(const void *buf, size_t sz)
 
 void MainWindow::on_recv_server()
 {
+    char recvbuf[1024];
+    memset(recvbuf, 0, sizeof(recvbuf));
+    uint lrecv = m_tcp->read(recvbuf, sizeof(recvbuf));
+    Head *head = (Head *)recvbuf;
+    requestColor *req;
 
+    switch (head->ts)
+    {
+    case 0x12:
+        on_off_lamp(true);
+        break;
+    case 0x13:
+        on_off_lamp(false);
+        break;
+    case 0x20:
+        req = (requestColor *)recvbuf;
+        set_lamp_color(req->m_red, req->m_green, req->m_blue);
+        break;
+    default:
+        std::cerr << "Unknown type of package" << std::endl;
+        break;
+    }
+}
+
+void MainWindow::on_off_lamp(bool flag)
+{
+    ui->textBrowser->setVisible(flag);
+}
+
+void MainWindow::set_lamp_color(uint8_t red, uint8_t green, uint8_t blue)
+{
+    ui->textBrowser->setStyleSheet(QString("background-color: rgb(%1, %2, %3);").arg(red).arg(green).arg(blue));
 }
