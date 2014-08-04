@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(m_tcp, SIGNAL(readyRead()), this, SLOT(on_recv_server()));
 
- //   ui->textBrowser->setVisible(false);
+    ui->textBrowser->setVisible(false);
 }
 
 MainWindow::~MainWindow()
