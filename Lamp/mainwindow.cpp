@@ -111,7 +111,7 @@ void MainWindow::on_recv_server()
     Head *head = (Head *)recvbuf;
     requestColor *req;
 
-    switch (head->ts)
+    switch (htons(head->ts))
     {
     case 0x12:
         on_off_lamp(true);
@@ -121,7 +121,7 @@ void MainWindow::on_recv_server()
         break;
     case 0x20:
         req = (requestColor *)recvbuf;
-        set_lamp_color(req->m_red, req->m_green, req->m_blue);
+        set_lamp_color(htons(req->m_red), htons(req->m_green), htons(req->m_blue));
         break;
     default:
         std::cerr << "Unknown type of package" << std::endl;
